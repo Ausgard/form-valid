@@ -19,10 +19,11 @@
 
         <div class="client-patronymic form-group">
             <label class="form__label">Отчество</label>
-            <input class="form__input" v-model.trim="patronymic" :class="{invalid: ($v.patronymic.$dirty && !$v.patronymic.minLength) || ($v.patronymic.$dirty && $v.patronymic.minLength && $v.patronymic.numeric)}" placeholder="Иванович"/>
+            <input class="form__input" v-model.trim="patronymic" :class="{invalid: ($v.patronymic.$dirty && !$v.patronymic.minLength) || ($v.patronymic.$dirty && !$v.patronymic.minLength && $v.patronymic.numeric)}" placeholder="Иванович"/>
         </div>
+        
         <div class="error" v-if="$v.patronymic.$dirty && !$v.patronymic.minLength">Отчество должно иметь как минимум {{$v.patronymic.$params.minLength.min}} символов.</div>
-        <div class="error" v-else-if="$v.patronymic.$dirty && $v.patronymic.minLength && $v.patronymic.numeric">Отчество не должно состоять с цифр</div>
+        <div class="error" v-if="$v.patronymic.$dirty && !$v.patronymic.minLength && $v.patronymic.numeric">Отчество не должно состоять с цифр</div>
         
         <button class="form__submit" type="submit">Зарегистрировать</button>
     </form>
