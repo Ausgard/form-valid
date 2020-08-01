@@ -1,34 +1,35 @@
 <template>
     <form class="user-form" @submit.prevent="formHandler">
-        <div class="client-surname form-group" :class="{ 'form-group--error': $v.surname.$error }">
+        <div class="client-surname form-group">
             <label class="form__label">Фамилия</label>
-            <input class="form__input" v-model.trim="$v.surname.$model" placeholder="Ivanov"/>
+            <input class="form__input" v-model.trim="surname" :class="{invalid: ($v.surname.$dirty && !$v.surname.required) || ($v.surname.$dirty && !$v.surname.minLength) || ($v.surname.$dirty && $v.surname.numeric)}" placeholder="Иванов"/>
         </div>
-        <div class="error" v-if="!$v.surname.required">Обязательное поле</div>
-        <div class="error" v-else-if="$v.surname.numeric">Фамилия не должна состоять с цифр</div>
-        <div class="error" v-else-if="!$v.surname.minLength">Фамилия должна состоять как минимум с {{$v.surname.$params.minLength.min}} символов.</div>
-        
-        <div class="client-name form-group" :class="{ 'form-group--error': $v.name.$error }">
-            <label class="form__label">Имя</label>
-            <input class="form__input" v-model.trim="$v.name.$model" placeholder="Ivan"/>
-        </div>
-        <div class="error" v-if="!$v.name.required">Обязательное поле</div>
-        <div class="error" v-else-if="$v.name.numeric">Имя не должно состоять с цифр</div>
-        <div class="error" v-if="!$v.name.minLength">Имя должно иметь как минимум {{$v.name.$params.minLength.min}} символа.</div>
+        <div class="error" v-if="$v.surname.$dirty && !$v.surname.required">Обязательное поле</div>
+        <div class="error" v-else-if="$v.surname.$dirty && $v.surname.numeric">Фамилия не должна состоять с цифр</div>
+        <div class="error" v-else-if="$v.surname.$dirty && !$v.surname.minLength">Фамилия должна иметь как минимум {{$v.surname.$params.minLength.min}} символа.</div>
 
-        <div class="client-patronymic form-group" :class="{ 'form-group--error': $v.patronymic.$error }">
-            <label class="form__label">Отчество</label>
-            <input class="form__input" v-model.trim="$v.patronymic.$model" placeholder="Ivanovich"/>
+
+        <div class="client-name form-group">
+            <label class="form__label">Имя</label>
+            <input class="form__input" v-model.trim="name" :class="{invalid: ($v.name.$dirty && !$v.name.required) || ($v.name.$dirty && !$v.name.minLength) || ($v.name.$dirty && $v.name.numeric)}" placeholder="Иван"/>
         </div>
-        <div class="error" v-if="!$v.patronymic.alpha">Отчество должно состоять только с букв</div>
-        <div class="error" v-else-if="$v.patronymic.numeric">Отчество не должно состоять с цифр</div>
-        <div class="error" v-if="!$v.patronymic.minLength">Отчество должно иметь как минимум {{$v.patronymic.$params.minLength.min}} символов.</div>
+        <div class="error" v-if="$v.name.$dirty && !$v.name.required">Обязательное поле</div>
+        <div class="error" v-else-if="$v.name.$dirty && $v.name.numeric">Имя не должно состоять с цифр</div>
+        <div class="error" v-else-if="$v.name.$dirty && !$v.name.minLength">Имя должно иметь как минимум {{$v.name.$params.minLength.min}} символа.</div>
+
+        <div class="client-patronymic form-group">
+            <label class="form__label">Отчество</label>
+            <input class="form__input" v-model.trim="patronymic" :class="{invalid: ($v.patronymic.$dirty && !$v.patronymic.minLength) || ($v.patronymic.$dirty && $v.patronymic.minLength && $v.patronymic.numeric)}" placeholder="Иванович"/>
+        </div>
+        <div class="error" v-if="$v.patronymic.$dirty && !$v.patronymic.minLength">Отчество должно иметь как минимум {{$v.patronymic.$params.minLength.min}} символов.</div>
+        <div class="error" v-else-if="$v.patronymic.$dirty && $v.patronymic.minLength && $v.patronymic.numeric">Отчество не должно состоять с цифр</div>
+        
         <button class="form__submit" type="submit">Зарегистрировать</button>
     </form>
 </template>
 
 <script>
-    import {required, numeric, alpha, minLength, alphaNum} from 'vuelidate/lib/validators'
+    import {required, numeric, minLength} from 'vuelidate/lib/validators'
 
     export default {
         data() {
@@ -39,23 +40,29 @@
             }
         },
         validations: {
-            name: {
-                required,
-                numeric,
-                alphaNum,
-                minLength: minLength(4)
-            },
             surname: {
                 required,
                 numeric,
-                alphaNum,
+                minLength: minLength(4)
+            },
+            name: {
+                required,
+                numeric,
                 minLength: minLength(4)
             },
             patronymic: {
-                alpha,
+                required,
                 numeric,
-                alphaNum,
                 minLength: minLength(8)
+            }
+        },
+
+        methods: {
+            formHandler() {
+                if(this.$v.$invalid) {
+                    this.$v.$touch()
+                    return
+                }
             }
         }
     }
@@ -96,12 +103,15 @@
         border-radius: 5px
         outline: none
         padding: 0 0.8rem
-        margin: 0.3rem 0 0 0
+        margin: 0.3rem 0 19px 0
+        &.invalid
+            border: solid 2px rgba(#c22727, 0.8)
+            margin: 0.3rem 0 0 0
 
 .error
   font-size: 12px
   color: orange
-  margin: 0.3rem 0 0 0
+  margin: 5px 0 0 0
 
 span
   font-size: 12px
@@ -122,4 +132,5 @@ span
         background-color: white
         color: #27c289
         transition: 0.2s
+
 </style>
