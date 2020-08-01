@@ -19,18 +19,18 @@
 
         <div class="client-patronymic form-group">
             <label class="form__label">Отчество</label>
-            <input class="form__input" v-model.trim="patronymic" :class="{invalid: ($v.patronymic.$dirty && !$v.patronymic.minLength) || ($v.patronymic.$dirty && !$v.patronymic.minLength && $v.patronymic.numeric)}" placeholder="Иванович"/>
+            <input class="form__input" v-model.trim="patronymic" :class="{invalid: ($v.patronymic.$dirty && !$v.patronymic.minLength) || (!$v.patronymic.alpha)}" placeholder="Иванович"/>
         </div>
         
         <div class="error" v-if="$v.patronymic.$dirty && !$v.patronymic.minLength">Отчество должно иметь как минимум {{$v.patronymic.$params.minLength.min}} символов.</div>
-        <div class="error" v-if="$v.patronymic.$dirty && !$v.patronymic.minLength && $v.patronymic.numeric">Отчество не должно состоять с цифр</div>
+        <div class="error" v-else-if="(!$v.patronymic.alpha)">Отчество не должно состоять с цифр</div>
         
         <button class="form__submit" type="submit">Зарегистрировать</button>
     </form>
 </template>
 
 <script>
-    import {required, numeric, minLength} from 'vuelidate/lib/validators'
+    import {required, numeric, minLength, alpha} from 'vuelidate/lib/validators'
 
     export default {
         data() {
@@ -54,6 +54,7 @@
             patronymic: {
                 required,
                 numeric,
+                alpha,
                 minLength: minLength(8)
             }
         },
