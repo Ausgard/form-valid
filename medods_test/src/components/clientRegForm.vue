@@ -1,8 +1,8 @@
 <template>
     <form class="user-form" @submit.prevent="formHandler">
         <div class="client-surname form-group">
-            <label class="form__label">Фамилия</label>
-            <input class="form__input" v-model.trim="surname" :class="{invalid: ($v.surname.$dirty && !$v.surname.required) || ($v.surname.$dirty && !$v.surname.minLength) || ($v.surname.$dirty && $v.surname.numeric)}" placeholder="Иванов"/>
+            <label class="form__label" for="surname">Фамилия</label>
+            <input class="form__input" type="text" name="surname" id="surname" v-model.trim="surname" :class="{invalid: ($v.surname.$dirty && !$v.surname.required) || ($v.surname.$dirty && !$v.surname.minLength) || ($v.surname.$dirty && $v.surname.numeric)}" placeholder="Иванов"/>
         </div>
         <div class="error" v-if="$v.surname.$dirty && !$v.surname.required">Обязательное поле</div>
         <div class="error" v-else-if="$v.surname.$dirty && $v.surname.numeric">Фамилия не должна состоять с цифр</div>
@@ -10,27 +10,27 @@
 
 
         <div class="client-name form-group">
-            <label class="form__label">Имя</label>
-            <input class="form__input" v-model.trim="name" :class="{invalid: ($v.name.$dirty && !$v.name.required) || ($v.name.$dirty && !$v.name.minLength) || ($v.name.$dirty && $v.name.numeric)}" placeholder="Иван"/>
+            <label class="form__label" for="name">Имя</label>
+            <input class="form__input" type="text" name="name" id="name" v-model.trim="name" :class="{invalid: ($v.name.$dirty && !$v.name.required) || ($v.name.$dirty && !$v.name.minLength) || ($v.name.$dirty && $v.name.numeric)}" placeholder="Иван"/>
         </div>
         <div class="error" v-if="$v.name.$dirty && !$v.name.required">Обязательное поле</div>
         <div class="error" v-else-if="$v.name.$dirty && $v.name.numeric">Имя не должно состоять с цифр</div>
         <div class="error" v-else-if="$v.name.$dirty && !$v.name.minLength">Имя должно иметь как минимум {{$v.name.$params.minLength.min}} символа.</div>
 
         <div class="client-patronymic form-group">
-            <label class="form__label">Отчество</label>
-            <input class="form__input" v-model.trim="patronymic" :class="{invalid: ($v.patronymic.$dirty && !$v.patronymic.minLength) || (!$v.patronymic.alpha)}" placeholder="Иванович"/>
+            <label class="form__label" for="patronymic">Отчество</label>
+            <input class="form__input" type="text" name="patronymic" id="patronymic" v-model.trim="patronymic" :class="{invalid: ($v.patronymic.$dirty && !$v.patronymic.minLength) || ($v.patronymic.$dirty && $v.patronymic.numeric && $v.patronymic.required)}" placeholder="Иванович"/>
         </div>
         
         <div class="error" v-if="$v.patronymic.$dirty && !$v.patronymic.minLength">Отчество должно иметь как минимум {{$v.patronymic.$params.minLength.min}} символов.</div>
-        <div class="error" v-else-if="(!$v.patronymic.alpha)">Отчество не должно состоять с цифр</div>
+        <div class="error" v-else-if="($v.patronymic.$dirty && $v.patronymic.numeric && $v.patronymic.required)">Отчество не должно состоять с цифр</div>
         
         <button class="form__submit" type="submit">Зарегистрировать</button>
     </form>
 </template>
 
 <script>
-    import {required, numeric, minLength, alpha} from 'vuelidate/lib/validators'
+    import {required, numeric, minLength} from 'vuelidate/lib/validators'
 
     export default {
         data() {
@@ -54,7 +54,6 @@
             patronymic: {
                 required,
                 numeric,
-                alpha,
                 minLength: minLength(8)
             }
         },
@@ -62,10 +61,34 @@
         methods: {
             formHandler() {
                 if(this.$v.$invalid) {
+                    let patronymicArr = []
+                    patronymic.value
+                    patronymicArr = patronymic.value.split('')
+
+                    removeSpaces(patronymicArr)
+                    console.log(patronymicArr)
+                    
                     this.$v.$touch()
                     return
                 }
+
+                function removeSpaces(array) {
+                    for (var i = 0; i < array.length; i++) {
+                        for (var j = i + 1; j < array.length;) {
+                        if (array[i] === ' ') {
+                            array.splice(i, 1);
+                        } else {
+                            j++;
+                        }
+                        }
+                    }
+                }
+
+                function alphaNumValid(array) {
+
+                }
             }
+
         }
     }
 </script>
