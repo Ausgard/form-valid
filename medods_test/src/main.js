@@ -8,6 +8,3 @@ Vue.config.productionTip = false
 new Vue({
   render: function (h) { return h(App) },
 }).$mount('#app')
-
-
-// :class="{invalid: ($v.surname.$dirty && !$v.surname.required) || ($v.surname.$dirty && !$v.surname.surname)}" 
