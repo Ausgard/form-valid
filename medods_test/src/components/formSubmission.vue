@@ -49,7 +49,7 @@
 </template>
 
 <script>
-    import {required, minLength, alpha, between} from 'vuelidate/lib/validators'
+    import {required, minLength, alpha, between, maxLength} from 'vuelidate/lib/validators'
 
     export default {
     data() {
@@ -57,9 +57,9 @@
         name: '',
         surname: '',
         patronymic: '',
-        birthDay: 0,
-        birthMonth: 0,
-        birthYear: 0,
+        birthDay: '',
+        birthMonth: '',
+        birthYear: '',
         submitStatus: null
         }
     },
@@ -80,14 +80,17 @@
         },
         birthDay: {
             required,
+            maxLength: maxLength(2),
             between: between(1, 31)
         },
         birthMonth: {
             required,
+            maxLength: maxLength(2),
             between: between(1, 12)
         },
         birthYear: {
             required,
+            maxLength: maxLength(4),
             between: between(1940, 2020)
         },
     
@@ -96,7 +99,7 @@
 
         setDay(value) {
             this.birthDay = value
-            this.$v.birthDay.$touch()
+            this.$v.birthDay.$touch()       
         },
 
         setMonth(value) {
