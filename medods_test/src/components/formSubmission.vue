@@ -41,6 +41,13 @@
             <div class="error" v-else-if="!$v.birthYear.required || !$v.birthMonth.required || !$v.birthDay.required">Обязательное поле</div>
         </div>
 
+        <div class="form-group form-group-phone" :class="{'form-group--error': $v.phone.$error}">
+            <label class="form__label" for="phone">Номер телефона</label>
+            <input class="form__input" type="tel" id="phone" name="phone" :value="phone" @change="setPhone($event.target.value)" placeholder="7 (123) 456-78-90">
+        </div>
+        <div class="error" v-if="!$v.phone.required">Обязательное поле</div>
+        <div class="error" v-else-if="!$v.phone.firstNum">Введите в формате "7 (123) 456-78-90"</div>
+
         <button class="form__submit" type="submit" :disabled="submitStatus === 'PENDING'">Submit!</button>
         <p class="form__status form__status--success" v-if="submitStatus === 'OK'">Пользователь зарегистрирован!</p>
         <p class="form__status form__status--error" v-if="submitStatus === 'ERROR'">Заполните форму корректно.</p>
@@ -50,7 +57,6 @@
 
 <script>
     import {required, minLength, alpha, between, maxLength} from 'vuelidate/lib/validators'
-
     export default {
     data() {
         return {
@@ -60,6 +66,7 @@
         birthDay: '',
         birthMonth: '',
         birthYear: '',
+        phone: '',
         submitStatus: null
         }
     },
@@ -93,10 +100,13 @@
             maxLength: maxLength(4),
             between: between(1940, 2020)
         },
-    
+        phone: {
+            required,
+            firstNum
+        },
     },
-    methods: {
 
+    methods: {
         setDay(value) {
             this.birthDay = value
             this.$v.birthDay.$touch()       
@@ -110,6 +120,12 @@
             this.birthYear = value
             this.$v.birthYear.$touch()
         },
+        
+        setPhone(value) {
+            this.phone = value
+            this.$v.phone.$touch()
+        },
+
         submit() {
             this.$v.$touch()
             if (this.$v.$invalid) {
@@ -122,6 +138,24 @@
                 }  
             }
         }
+    } 
+    function firstNum() {
+        let swich
+        
+        if(this.phone.charAt(0) === '7' && (this.phone.charAt(1) && this.phone.charAt(7) === ' ') && (this.phone.charAt(11) && this.phone.charAt(14) === '-')) {
+            swich = true
+            let phoneStr = this.phone
+            let pattern = /[^\d)(-\s]/g;
+            let phoneArr = phoneStr.match(pattern);
+            if(phoneArr) {
+                swich = false
+            } else {
+                swich = true
+            }      
+        } else {
+            swich = false
+        }
+        return swich
     }
 </script>
 

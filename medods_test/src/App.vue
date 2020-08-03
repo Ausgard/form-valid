@@ -5,7 +5,7 @@
 </template>
 
 <script>
-// import clientRegForm from '@/components/clientRegForm.vue'
+// import pass from '@/components/pass.vue'
 import formSubmission from '@/components/formSubmission.vue'
 export default {
   name: 'App',
