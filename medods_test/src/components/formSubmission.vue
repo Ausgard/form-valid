@@ -25,15 +25,15 @@
         <div class="error" v-else-if="!$v.patronymic.alpha">Только латинские буквы</div>
 
         <div class="form-group form-group--birthData">
-            <div class="form-group form-group-day" :class="{'form-group--error': $v.birthDay.$error}">
+            <div class="form-group form-group--day" :class="{'form-group--error': $v.birthDay.$error}">
                 <label class="form__label" for="birthDay">День</label>
                 <input class="form__input" type="text" id="birthDay" name="birthDay" :value="birthDay" @change="setDay($event.target.value)" placeholder="dd">
             </div>
-            <div class="form-group form-group-month" :class="{'form-group--error': $v.birthMonth.$error}">
+            <div class="form-group form-group--month" :class="{'form-group--error': $v.birthMonth.$error}">
                 <label class="form__label" for="birthMonth">Месяц</label>
                 <input class="form__input" type="text" id="birthMonth" name="birthMonth" :value="birthMonth" @change="setMonth($event.target.value)" placeholder="mm">
             </div>
-            <div class="form-group form-group-year" :class="{'form-group--error': $v.birthYear.$error}">
+            <div class="form-group form-group--year" :class="{'form-group--error': $v.birthYear.$error}">
                 <label class="form__label" for="birthDate">Год</label>
                 <input class="form__input" type="text" id="birthYear" name="birthYear" :value="birthYear" @change="setYear($event.target.value)" placeholder="year">
             </div>
@@ -52,7 +52,26 @@
             <label class="form__label" for="gender">Пол</label>
             <input class="form__input" type="text" id="gender" name="gender" :value="gender" @change="setGender($event.target.value)" placeholder="male/female">
         </div>
-        <div class="error" v-if="!$v.gender.genderValid">Укажите пол в формате: "male/female"</div>
+        <div class="error" v-if="!$v.gender.genderValid">Укажите пол в формате: "male/female"</div>  
+        <div class="form-group form-group--client-info">
+            <div class="form-group form-group--clientGroup" :class="{'form-group--error': $v.clientGroupInfo.$error}">
+                <label class="form__label" for="clientsList">Группа клиентов</label>
+                <select name="clientsList" id="clientsList" multiple :client="client" v-model="groupSelected">
+                    <option v-for="client of clientGroup" :value="client.title">{{client.title}}</option>
+                </select>
+                <div class="error" v-if="!$v.clientGroupInfo.clientGroupValid">Обязательное поле</div>
+            </div>
+            <div class="form-group form-group--doctorsList">
+                <label class="form__label" for="doctorsList">Лечащий врач</label>
+                <select name="doctorsList" id="doctorsList" :doctor="doctor" v-model="doctorSelected">
+                    <option v-for="doctor of doctorGroup" :value="doctor.title">{{doctor.title}}</option>
+                </select>
+            </div>
+            <div class="form-group__checkbox">
+                <input type="checkbox" v-model="sendSms" true-value="Не отправлять СМС" false-value="Отправить СМС">
+                <p class="error">{{sendSms}}</p>
+            </div>
+        </div>
 
         <button class="form__submit" type="submit" :disabled="submitStatus === 'PENDING'">Submit!</button>
         <p class="form__status form__status--success" v-if="submitStatus === 'OK'">Пользователь зарегистрирован!</p>
@@ -64,95 +83,115 @@
 <script>
     import {required, minLength, alpha, between, maxLength} from 'vuelidate/lib/validators'
     export default {
-    data() {
-        return {
-        name: '',
-        surname: '',
-        patronymic: '',
-        birthDay: '',
-        birthMonth: '',
-        birthYear: '',
-        phone: '',
-        gender: '',
-        submitStatus: null
-        }
-    },
-    validations: {
-        surname: {
-            required,
-            alpha,
-            minLength: minLength(4)
-        },
-        name: {
-            required,
-            alpha,
-            minLength: minLength(4)
-        },
-        patronymic: {
-            alpha,
-            minLength: minLength(8)
-        },
-        birthDay: {
-            required,
-            maxLength: maxLength(2),
-            between: between(1, 31)
-        },
-        birthMonth: {
-            required,
-            maxLength: maxLength(2),
-            between: between(1, 12)
-        },
-        birthYear: {
-            required,
-            maxLength: maxLength(4),
-            between: between(1940, 2020)
-        },
-        phone: {
-            required,
-            numValid
-        },
-        gender: {
-            genderValid
-        }
-    },
-
-    methods: {
-        setDay(value) {
-            this.birthDay = value
-            this.$v.birthDay.$touch()       
-        },
-
-        setMonth(value) {
-            this.birthMonth = value
-            this.$v.birthMonth.$touch()
-        },
-        setYear(value) {
-            this.birthYear = value
-            this.$v.birthYear.$touch()
-        },
         
-        setPhone(value) {
-            this.phone = value
-            this.$v.phone.$touch()
+        data() {
+            return {
+            name: '',
+            surname: '',
+            patronymic: '',
+            birthDay: '',
+            birthMonth: '',
+            birthYear: '',
+            phone: '',
+            gender: '',
+            clientGroupInfo: '',
+            groupSelected: '',
+            doctorSelected: '',
+            sendSms: 'Отправить СМС',
+            submitStatus: null
+            }
         },
 
-        setGender(value) {
-            this.gender = value
-            this.$v.gender.$touch()
+        validations: {
+            surname: {
+                required,
+                alpha,
+                minLength: minLength(4)
+            },
+            name: {
+                required,
+                alpha,
+                minLength: minLength(4)
+            },
+            patronymic: {
+                alpha,
+                minLength: minLength(8)
+            },
+            birthDay: {
+                required,
+                maxLength: maxLength(2),
+                between: between(1, 31)
+            },
+            birthMonth: {
+                required,
+                maxLength: maxLength(2),
+                between: between(1, 12)
+            },
+            birthYear: {
+                required,
+                maxLength: maxLength(4),
+                between: between(1940, 2020)
+            },
+            phone: {
+                required,
+                numValid
+            },
+            gender: {
+                genderValid
+            },
+            clientGroupInfo: {
+                clientGroupValid
+            }
         },
-        submit() {
-            this.$v.$touch()
-            if (this.$v.$invalid) {
-                this.submitStatus = 'ERROR'
-            } else {
-                this.submitStatus = 'PENDING'
-                setTimeout(() => {
-                    this.submitStatus = 'OK'
-                    }, 500)
-                }  
+
+        props: {
+            clientGroup: {
+                type: Array,
+                required: true
+            },
+            doctorGroup: {
+                type: Array,
+                required: true
+            }
+        },
+
+        methods: {
+            setDay(value) {
+                this.birthDay = value
+                this.$v.birthDay.$touch()       
+            },
+
+            setMonth(value) {
+                this.birthMonth = value
+                this.$v.birthMonth.$touch()
+            },
+            setYear(value) {
+                this.birthYear = value
+                this.$v.birthYear.$touch()
+            },
+            
+            setPhone(value) {
+                this.phone = value
+                this.$v.phone.$touch()
+            },
+
+            setGender(value) {
+                this.gender = value
+                this.$v.gender.$touch()
+            },
+            submit() {
+                this.$v.$touch()
+                if (this.$v.$invalid) {
+                    this.submitStatus = 'ERROR'
+                } else {
+                    this.submitStatus = 'PENDING'
+                    setTimeout(() => {
+                        this.submitStatus = 'OK'
+                        }, 500)
+                    }  
+                }
             }
         }
-    } 
     function numValid() {
         let swich
         
@@ -178,6 +217,14 @@
            return false 
         }
     }
+    function clientGroupValid() {
+        if(this.groupSelected) {
+            return true
+        } else {
+            return false
+        }
+        
+    }
 </script>
 
 <style scoped lang="sass">
@@ -202,7 +249,8 @@
     label
         font-size: 16px
         color: rgba(31,63,104, 0.8);
-    input
+    input,
+    select
         display: flex
         width: 79.688vw
         height: 9.376vw
@@ -216,14 +264,25 @@
         outline: none
         padding: 0 0.8rem
         margin: 0.3rem 0 0 0
-
+.form-group__checkbox
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    width: 100%
+    input
+        max-width: 25px
+        max-height: 25px
+        min-width: 25px
+        min-height: 25px
 .error
   font-size: 12px
   color: orange
   margin: 5px 0 0 0
 
 .form-group--error
-    input
+    input,
+    select
         border: solid 2px rgba(#c22727, 0.8)
         margin: 0.3rem 0 0 0
 
@@ -268,6 +327,7 @@ span
     flex-wrap: wrap
     width: 230px
     height: auto
+    margin: 15px 0
     input
         min-width: 20px
         min-height: 20px
@@ -276,12 +336,27 @@ span
         text-align: center
         padding: 0 0 0 0
 
-.form-group-day,
-.form-group-month,
-.form-group-year
+.form-group--day,
+.form-group--month,
+.form-group--year
     display: flex
     flex-direction: column
     justify-content: center
     align-items: center
+
+.form-group--clientGroup,
+.form-group--client-info
+    select
+        height: auto
+        border-top: none
+        border-bottom: none
+        border-radius: 0
+    option
+        margin: 5px 0
+.form-group--client-info
+    margin: 15px 0 0 0
+
+.form-group--doctorsList
+    margin: 15px 0 0 0
 
 </style>
