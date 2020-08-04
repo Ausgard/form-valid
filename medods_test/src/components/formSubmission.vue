@@ -59,7 +59,7 @@
                 <select name="clientsList" id="clientsList" multiple :client="client" v-model="groupSelected">
                     <option v-for="client of clientGroup" :value="client.title">{{client.title}}</option>
                 </select>
-                <div class="error" v-if="!$v.clientGroupInfo.clientGroupValid">Обязательное поле</div>
+                <div class="error" v-if="!$v.clientGroupInfo.required">Обязательное поле</div>
             </div>
             <div class="form-group form-group--doctorsList">
                 <label class="form__label" for="doctorsList">Лечащий врач</label>
@@ -72,6 +72,22 @@
                 <p class="error">{{sendSms}}</p>
             </div>
         </div>
+        <div class="form-index">
+            <div class="form-group form-group--index" :class="{'form-group--error': $v.countryIndex.$error}">
+                <label class="form__label">Индекс</label>
+                <input class="form__input" v-model.trim="$v.countryIndex.$model" placeholder="123456"/>
+            </div>
+            <div class="error" v-if="!$v.countryIndex.numeric || !$v.countryIndex.minLength || !$v.countryIndex.maxLength">Индекс должен составлять 6 цифр</div>
+        </div>
+
+        <div class="form-index">
+            <div class="form-group form-group--country" :class="{'form-group--error': $v.country.$error}">
+                <label class="form__label">Страна</label>
+                <input class="form__input" v-model.trim="$v.country.$model" placeholder="Russia"/>
+            </div>
+            <div class="error" v-if="!$v.country.alpha || !$v.country.countryValid">Введите в формате: "Country"</div>
+        </div>
+        
 
         <button class="form__submit" type="submit" :disabled="submitStatus === 'PENDING'">Submit!</button>
         <p class="form__status form__status--success" v-if="submitStatus === 'OK'">Пользователь зарегистрирован!</p>
@@ -81,7 +97,7 @@
 </template>
 
 <script>
-    import {required, minLength, alpha, between, maxLength} from 'vuelidate/lib/validators'
+    import {required, minLength, alpha, between, maxLength, numeric} from 'vuelidate/lib/validators'
     export default {
         
         data() {
@@ -97,6 +113,8 @@
             clientGroupInfo: '',
             groupSelected: '',
             doctorSelected: '',
+            countryIndex: '',
+            country: '',
             sendSms: 'Отправить СМС',
             submitStatus: null
             }
@@ -140,7 +158,16 @@
                 genderValid
             },
             clientGroupInfo: {
-                clientGroupValid
+                required
+            },
+            countryIndex: {
+                maxLength: maxLength(6),
+                minLength: minLength(6),
+                numeric
+            },
+            country: {
+                countryValid,
+                alpha
             }
         },
 
@@ -217,13 +244,23 @@
            return false 
         }
     }
-    function clientGroupValid() {
-        if(this.groupSelected) {
+    function countryValid() {
+        let upperCaseStr = this.country.toUpperCase()
+        if(this.country.charAt(0) === upperCaseStr.charAt(0)) {
+            let countryArr = this.country.split('')
+            console.log(countryArr)
             return true
+            // for(let i = 1; this.country.length; i++) {
+            //     if(this.country.charAt(i) === upperCaseStr.charAt(i)) {
+            //         return true
+            //     } else {
+            //         return false
+            //     }
+            // }
+
         } else {
             return false
         }
-        
     }
 </script>
 
@@ -270,6 +307,7 @@
     justify-content: center
     align-items: center
     width: 100%
+    margin: 0.3rem 0 0 0
     input
         max-width: 25px
         max-height: 25px
@@ -338,7 +376,8 @@ span
 
 .form-group--day,
 .form-group--month,
-.form-group--year
+.form-group--year,
+.form-group--clientGroup
     display: flex
     flex-direction: column
     justify-content: center
