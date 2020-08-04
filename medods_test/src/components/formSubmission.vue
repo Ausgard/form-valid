@@ -47,6 +47,12 @@
         </div>
         <div class="error" v-if="!$v.phone.required">Обязательное поле</div>
         <div class="error" v-else-if="!$v.phone.firstNum">Введите в формате "7 (123) 456-78-90"</div>
+        
+        <div class="form-group form-group-gender" :class="{'form-group--error': $v.gender.$error}">
+            <label class="form__label" for="gender">Пол</label>
+            <input class="form__input" type="text" id="gender" name="gender" :value="gender" @change="setGender($event.target.value)" placeholder="male/female">
+        </div>
+        <div class="error" v-if="!$v.gender.genderValid">Укажите пол в формате: "male/female"</div>
 
         <button class="form__submit" type="submit" :disabled="submitStatus === 'PENDING'">Submit!</button>
         <p class="form__status form__status--success" v-if="submitStatus === 'OK'">Пользователь зарегистрирован!</p>
@@ -67,6 +73,7 @@
         birthMonth: '',
         birthYear: '',
         phone: '',
+        gender: '',
         submitStatus: null
         }
     },
@@ -104,6 +111,9 @@
             required,
             firstNum
         },
+        gender: {
+            genderValid
+        }
     },
 
     methods: {
@@ -126,6 +136,10 @@
             this.$v.phone.$touch()
         },
 
+        setGender(value) {
+            this.gender = value
+            this.$v.gender.$touch()
+        },
         submit() {
             this.$v.$touch()
             if (this.$v.$invalid) {
@@ -156,6 +170,13 @@
             swich = false
         }
         return swich
+    }
+    function genderValid() {
+        if(this.gender === 'male' || this.gender === 'female' || this.gender === '') {
+            return true
+        } else {
+           return false 
+        }
     }
 </script>
 
