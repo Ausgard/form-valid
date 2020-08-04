@@ -46,7 +46,7 @@
             <input class="form__input" type="tel" id="phone" name="phone" :value="phone" @change="setPhone($event.target.value)" placeholder="7 (123) 456-78-90">
         </div>
         <div class="error" v-if="!$v.phone.required">Обязательное поле</div>
-        <div class="error" v-else-if="!$v.phone.firstNum">Введите в формате "7 (123) 456-78-90"</div>
+        <div class="error" v-else-if="!$v.phone.numValid">Введите в формате "7 (123) 456-78-90"</div>
         
         <div class="form-group form-group-gender" :class="{'form-group--error': $v.gender.$error}">
             <label class="form__label" for="gender">Пол</label>
@@ -109,7 +109,7 @@
         },
         phone: {
             required,
-            firstNum
+            numValid
         },
         gender: {
             genderValid
@@ -153,7 +153,7 @@
             }
         }
     } 
-    function firstNum() {
+    function numValid() {
         let swich
         
         if(this.phone.charAt(0) === '7' && (this.phone.charAt(1) && this.phone.charAt(7) === ' ') && (this.phone.charAt(11) && this.phone.charAt(14) === '-')) {
@@ -172,7 +172,7 @@
         return swich
     }
     function genderValid() {
-        if(this.gender === 'male' || this.gender === 'female' || this.gender === '') {
+        if(this.gender === 'male' || this.gender === 'Male' || this.gender === 'female' || this.gender === 'Female' || this.gender === '') {
             return true
         } else {
            return false 
