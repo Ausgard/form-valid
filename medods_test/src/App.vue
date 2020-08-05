@@ -4,6 +4,7 @@
       
       :clientGroup="clientGroup"
       :doctorGroup="doctorGroup"
+      :documentGroup="documentGroup"
       
      />
   </div>
@@ -24,6 +25,11 @@ export default {
         {id: 1, title: 'Иванов', completed: false},
         {id: 2, title: 'Захаров', completed: false},
         {id: 3, title: 'Чернышева', completed: false}
+      ],
+      documentGroup: [
+        {id: 1, title: 'Паспорт', completed: false},
+        {id: 2, title: 'Свидетельство о рождении', completed: false},
+        {id: 3, title: 'Вод. удостоверение', completed: false}
       ]
     }
   },
