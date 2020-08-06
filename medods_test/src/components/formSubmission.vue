@@ -61,14 +61,14 @@
             <div class="user-form__client-info">
                 <div class="user-form__clientGroup" :class="{'form-group--error': $v.clientGroupInfo.$error}">
                     <label class="form__label" for="clientsList">Группа клиентов</label>
-                    <select name="clientsList" id="clientsList" multiple :client="client" v-model="groupSelected">
+                    <select name="clientsList" id="clientsList" multiple v-model="groupSelected">
                         <option v-for="client of clientGroup" :value="client.title">{{client.title}}</option>
                     </select>
                     <p class="error" v-if="!$v.clientGroupInfo.clientGroupValid">Обязательное поле</p>
                 </div>
                 <div class="user-form__doctorsList">
                     <label class="form__label" for="doctorsList">Лечащий врач</label>
-                    <select name="doctorsList" id="doctorsList" :doctor="doctor" v-model="doctorSelected">
+                    <select name="doctorsList" id="doctorsList" v-model="doctorSelected">
                         <option v-for="doctor of doctorGroup" :value="doctor.title">{{doctor.title}}</option>
                     </select>
                 </div>
@@ -123,7 +123,7 @@
             <h3 class="user-form__hedline">Паспорт</h3>
             <div class="user-form__documentsList" :class="{'form-group--error': $v.documentSelected.$error}">
                 <label class="form__label" for="documentsList">Тип документа</label>
-                <select name="documentsList" id="documentsList" :document="document" v-model="documentSelected">
+                <select name="documentsList" id="documentsList" v-model="documentSelected">
                     <option v-for="document of documentGroup" :value="document.title">{{document.title}}</option>
                 </select>
                 <p class="error" v-if="!$v.documentSelected.required">Обязательное поле</p>
